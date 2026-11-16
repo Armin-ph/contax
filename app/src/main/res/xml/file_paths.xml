@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path name="backups" path="backups/" />
+    <!-- APK نسخه جدید دانلودشده برای آپدیت داخلی -->
+    <cache-path name="update_apk" path="update/" />
+</paths>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Persian (default language) -->
+    <string name="app_name">Contax</string>
+
+    <string name="tab_contacts">مخاطبین</string>
+    <string name="tab_backup">بکاپ</string>
+    <string name="tab_tools">ابزارها</string>
+    <string name="tab_settings">تنظیمات</string>
+
+    <string name="contacts_title">مخاطبین</string>
+    <string name="search_hint">جستجوی نام، شماره، ایمیل…</string>
+    <string name="filter_all">همه</string>
+    <string name="source_device">دستگاه</string>
+    <string name="source_sim1">سیم‌کارت ۱</string>
+    <string name="source_sim2">سیم‌کارت ۲</string>
+    <string name="source_google">Google</string>
+    <string name="source_exchange">Exchange</string>
+    <string name="source_account">حساب</string>
+    <string name="count_contacts">%d مخاطب</string>
+
+    <string name="perm_title">مجوز دسترسی به مخاطبین</string>
+    <string name="perm_text">برای نمایش و مدیریت مخاطبین از حافظه دستگاه، سیم‌کارت و حساب‌ها، Contax به مجوز مخاطبین نیاز دارد. هیچ داده‌ای از دستگاه شما خارج نمی‌شود.</string>
+    <string name="perm_grant">اعطای مجوز</string>
+    <string name="perm_denied">مجوز رد شد. برای ادامه، مجوز مخاطبین را از تنظیمات فعال کنید.</string>
+
+    <string name="empty_contacts">مخاطبی یافت نشد</string>
+    <string name="empty_contacts_sub">با دکمه + مخاطب جدید اضافه کنید یا فیلتر/جستجو را تغییر دهید</string>
+    <string name="select_mode">انتخاب چندتایی</string>
+    <string name="selected_count">%d انتخاب شد</string>
+    <string name="action_select_all">انتخاب همه</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_move">انتقال</string>
+    <string name="action_copy">کپی</string>
+    <string name="action_backup">بکاپ</string>
+    <string name="action_cancel">لغو</string>
+    <string name="action_save">ذخیره</string>
+    <string name="action_ok">تأیید</string>
+    <string name="action_close">بستن</string>
+    <string name="action_refresh">تازه‌سازی</string>
+    <string name="action_import">درون‌ریزی</string>
+
+    <string name="confirm_delete_title">حذف مخاطب</string>
+    <string name="confirm_delete_text">%d مخاطب حذف شود؟ این عمل بازگشت‌پذیر نیست.</string>
+    <string name="confirm_delete_one">این مخاطب حذف شود؟ این عمل بازگشت‌پذیر نیست.</string>
+
+    <string name="new_contact">مخاطب جدید</string>
+    <string name="edit_contact">ویرایش مخاطب</string>
+    <string name="field_first_name">نام</string>
+    <string name="field_last_name">نام خانوادگی</string>
+    <string name="field_phone">شماره تلفن</string>
+    <string name="field_email">ایمیل</string>
+    <string name="field_org">سازمان / شرکت</string>
+    <string name="field_address">آدرس</string>
+    <string name="field_note">یادداشت</string>
+    <string name="label_mobile">موبایل</string>
+    <string name="label_home">خانه</string>
+    <string name="label_work">کار</string>
+    <string name="label_other">سایر</string>
+    <string name="add_phone">افزودن شماره</string>
+    <string name="add_email">افزودن ایمیل</string>
+    <string name="change_photo">تغییر عکس</string>
+    <string name="remove_photo">حذف عکس</string>
+    <string name="save_to">ذخیره در</string>
+    <string name="sim_limit_note">سیم‌کارت فقط نام و یک شماره را ذخیره می‌کند؛ فیلدهای دیگر نادیده گرفته می‌شوند.</string>
+    <string name="sim_write_unsupported">نوشتن روی سیم‌کارت در این دستگاه پشتیبانی نمی‌شود.</string>
+    <string name="name_required">نام الزامی است</string>
+    <string name="phone_required">حداقل یک شماره تلفن لازم است</string>
+
+    <string name="saved_success">ذخیره شد</string>
+    <string name="delete_success">حذف شد</string>
+    <string name="copied_success">%d مخاطب کپی شد</string>
+    <string name="moved_success">%d مخاطب منتقل شد</string>
+    <string name="fail_error">عملیات ناموفق بود</string>
+
+    <string name="call">تماس</string>
+    <string name="sms">پیامک</string>
+    <string name="edit">ویرایش</string>
+    <string name="more">بیشتر</string>
+    <string name="copy_to">کپی به…</string>
+    <string name="move_to">انتقال به…</string>
+    <string name="favorite">علاقه‌مندی</string>
+
+    <string name="backup_title">بکاپ و بازیابی</string>
+    <string name="last_backup_status">آخرین وضعیت بکاپ</string>
+    <string name="last_backup_none">هنوز بکاپی گرفته نشده است</string>
+    <string name="contacts_count_label">مخاطب</string>
+    <string name="size_label">اندازه</string>
+    <string name="new_backup">بکاپ جدید</string>
+    <string name="restore">بازیابی</string>
+    <string name="backup_format">فرمت خروجی</string>
+    <string name="backup_destination">مقصد ذخیره</string>
+    <string name="dest_internal">حافظه برنامه</string>
+    <string name="dest_internal_sub">فایل در پوشه خصوصی برنامه ذخیره می‌شود</string>
+    <string name="dest_saf">انتخاب مکان (SD / درایو)</string>
+    <string name="dest_saf_sub">از انتخابگر فایل؛ Google Drive هم در دسترس است</string>
+    <string name="encryption">رمزگذاری فایل بکاپ</string>
+    <string name="enc_none">بدون رمز</string>
+    <string name="enc_device">کلید دستگاه</string>
+    <string name="enc_password">گذرواژه</string>
+    <string name="password">گذرواژه</string>
+    <string name="password_hint">حداقل ۴ کاراکتر</string>
+    <string name="backup_done">بکاپ با موفقیت ایجاد شد</string>
+    <string name="backup_failed">ایجاد بکاپ ناموفق بود</string>
+    <string name="no_contacts_to_backup">مخاطبی برای بکاپ وجود ندارد</string>
+    <string name="storage_unavailable">نوشتن فایل ناموفق بود</string>
+    <string name="backup_history">بکاپ‌های قبلی</string>
+    <string name="view_all">مشاهده همه</string>
+    <string name="latest_backup">آخرین بکاپ</string>
+    <string name="auto_backup">بکاپ خودکار</string>
+
+    <string name="restore_title">بازیابی مخاطبین</string>
+    <string name="restore_pick">انتخاب منبع بازیابی</string>
+    <string name="restore_from_file">انتخاب فایل بکاپ…</string>
+    <string name="restore_encrypted">این بکاپ رمزگذاری شده است؛ گذرواژه را وارد کنید:</string>
+    <string name="wrong_password">گذرواژه نادرست است</string>
+    <string name="restore_conflict">برخورد با مخاطبین موجود</string>
+    <string name="conflict_skip">رد کردن شماره‌های تکراری</string>
+    <string name="conflict_dup">افزودن به‌عنوان مخاطب جدید</string>
+    <string name="restore_target">ذخیره بازیابی در</string>
+    <string name="restore_selected_count">%d مخاطب انتخاب شد</string>
+    <string name="restore_done">%d افزوده شد، %d رد شد</string>
+    <string name="restore_running">در حال بازیابی…</string>
+    <string name="select_contacts_to_restore">مخاطبین را برای بازیابی انتخاب کنید</string>
+
+    <string name="compare">مقایسه با مخاطبین فعلی</string>
+    <string name="compare_title">مقایسه بکاپ</string>
+    <string name="compare_only_backup">فقط در بکاپ (%d)</string>
+    <string name="compare_only_device">فقط در دستگاه (%d)</string>
+    <string name="compare_matched">مشترک: %d مخاطب</string>
+
+    <string name="download">دانلود / اشتراک</string>
+    <string name="delete_backup">حذف بکاپ</string>
+    <string name="confirm_delete_backup">این بکاپ حذف شود؟ فایل آن نیز حذف خواهد شد.</string>
+
+    <string name="schedule_title">بکاپ زمان‌بندی‌شده</string>
+    <string name="schedule_off">خاموش</string>
+    <string name="schedule_daily">روزانه</string>
+    <string name="schedule_weekly">هفتگی</string>
+    <string name="schedule_hour">ساعت اجرا</string>
+    <string name="next_auto_backup">بکاپ خودکار بعدی: %s</string>
+    <string name="noti_permission_text">برای اطلاع از نتیجه بکاپ خودکار، مجوز اعلان لازم است.</string>
+
+    <string name="tools_title">ابزارها</string>
+    <string name="stats_title">آمار مخاطبین</string>
+    <string name="stats_total">مجموع</string>
+    <string name="stats_favorites">علاقه‌مندی‌ها</string>
+    <string name="stats_by_source">بر اساس منبع</string>
+    <string name="duplicates_title">مخاطبین تکراری</string>
+    <string name="duplicates_scan">اسکن تکراری‌ها</string>
+    <string name="duplicates_none">مخاطب تکراری پیدا نشد</string>
+    <string name="duplicates_found">%d گروه تکراری پیدا شد</string>
+    <string name="reason_phone">شماره یکسان</string>
+    <string name="reason_name">نام یکسان</string>
+    <string name="merge">ادغام</string>
+    <string name="merge_all">ادغام همه</string>
+    <string name="merge_confirm">%d مخاطب در یک مخاطب ادغام شوند؟ اطلاعات آن‌ها ترکیب می‌شود.</string>
+    <string name="merge_done">ادغام انجام شد</string>
+    <string name="merge_partial">ادغام ناقص ماند؛ حذف برخی مخاطبین تکراری ممکن نشد (معمولاً مخاطب سیم‌کارت)</string>
+    <string name="import_title">درون‌ریزی مخاطبین</string>
+    <string name="import_pick">انتخاب فایل (VCF / CSV / JSON)</string>
+    <string name="import_done">%d مخاطب افزوده شد</string>
+    <string name="import_failed">خواندن فایل ناموفق بود</string>
+
+    <string name="settings_title">تنظیمات</string>
+    <string name="appearance">ظاهر و زبان</string>
+    <string name="language">زبان</string>
+    <string name="theme">تم</string>
+    <string name="theme_system">سیستم</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تاریک</string>
+
+    <string name="security">امنیت</string>
+    <string name="app_lock">قفل برنامه</string>
+    <string name="app_lock_sub">ورود با رمز PIN یا اثر انگشت</string>
+    <string name="set_pin">تنظیم رمز PIN</string>
+    <string name="change_pin">تغییر رمز PIN</string>
+    <string name="enter_pin">وارد کردن رمز (۴ تا ۶ رقم)</string>
+    <string name="confirm_pin">تکرار رمز</string>
+    <string name="pin_mismatch">رمزها یکسان نیستند</string>
+    <string name="pin_saved">رمز ذخیره شد</string>
+    <string name="pin_required_for_lock">برای فعال‌سازی قفل، ابتدا رمز PIN را تنظیم کنید</string>
+    <string name="pin_required_for_fingerprint">برای فعال‌سازی اثر انگشت، ابتدا رمز PIN را تنظیم کنید</string>
+    <string name="fingerprint">باز کردن با اثر انگشت</string>
+    <string name="fingerprint_unavailable">حسگر بیومتریک در این دستگاه در دسترس نیست</string>
+    <string name="lock_now">قفل کردن اکنون</string>
+
+    <string name="about">درباره</string>
+    <string name="version">نسخه</string>
+    <string name="about_sub">مدیریت مخاطبین دستگاه، سیم‌کارت و حساب‌ها همراه با بکاپ رمزگذاری‌شده</string>
+    <string name="website">سایت</string>
+    <string name="github_link">گیت‌هاب</string>
+    <string name="telegram_link">کانال تلگرام</string>
+    <string name="donate">حمایت مالی</string>
+    <string name="pay_rial">پرداخت با ریال</string>
+    <string name="pay_crypto">پرداخت با کریپتو</string>
+    <string name="crypto_pay_title">پرداخت با کریپتو</string>
+    <string name="crypto_pay_sub">روی آیکون کپی بزنید تا آدرس ولت کپی شود، سپس آن را در کیف پول خود قرار دهید</string>
+    <string name="copied">آدرس کپی شد</string>
+    <string name="copy">کپی</string>
+    <string name="check_updates">بررسی به‌روزرسانی</string>
+    <string name="update_auto_check">بررسی خودکار به‌روزرسانی</string>
+    <string name="update_auto_check_sub">هنگام باز شدن برنامه، نسخه جدید بررسی شود</string>
+    <string name="update_available_title">نسخه جدید موجود است</string>
+    <string name="update_available_text">نسخه %1$s در دسترس است (نسخه فعلی: %2$s)</string>
+    <string name="update_changelog">لیست تغییرات</string>
+    <string name="update_btn">دانلود و نصب</string>
+    <string name="update_later">بعداً</string>
+    <string name="update_downloading">در حال دانلود…</string>
+    <string name="update_failed">دانلود یا نصب ناموفق بود؛ دوباره تلاش کنید</string>
+    <string name="update_latest">شما از جدیدترین نسخه استفاده می‌کنید</string>
+
+    <string name="lock_title">Contax قفل است</string>
+    <string name="lock_subtitle">رمز را وارد کنید یا از اثر انگشت استفاده کنید</string>
+    <string name="wrong_pin">رمز نادرست</string>
+    <string name="unlock_fingerprint">اثر انگشت</string>
+
+    <string name="notif_channel_name">بکاپ خودکار</string>
+    <string name="auto_backup_done_title">بکاپ خودکار انجام شد</string>
+    <string name="auto_backup_done_text">%d مخاطب بکاپ گرفته شد</string>
+    <string name="auto_backup_failed_title">بکاپ خودکار ناموفق بود</string>
+</resources>

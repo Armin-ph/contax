@@ -1,0 +1,64 @@
+# ──────────────────────────────────────────────────────
+#  Contax — .gitignore
+#  هر فایلی که «اطلاعات خصوصی» یا «راهنمای مدیر پروژه» است
+#  را با پیشوند PRIVATE_ نام‌گذاری کنید تا به گیت‌هاب آپلود نشود.
+#  مثال: PRIVATE_RELEASE_GUIDE.md ، PRIVATE_NOTES.md
+# ──────────────────────────────────────────────────────
+
+# ---- فایل‌های نصبی و بیلد خروجی (اجباری: آپلود نشوند) ----
+*.apk
+*.aab
+*.apks
+*.ap_
+*.dex
+
+# ---- کلیدها و اطلاعات امضا (خیلی حساس!) ----
+*.jks
+*.keystore
+keystore.properties
+signing/
+PRIVATE_KEY_STORE*
+
+# ---- فایل‌های خصوصی و راهنمای مدیر پروژه ----
+PRIVATE_*
+private/
+docs/private/
+
+# ---- لیست تغییرات (changelog) — خصوصی، آپلود نشود ----
+CHANGELOG*
+changelog*
+changeloge*
+
+# ---- راهنمای انتشار نسخه روی گیت‌هاب — خصوصی، آپلود نشود ----
+GITHUB_RELEASE*
+
+# ---- لاگ‌ها ----
+*.log
+
+# ---- سیستم‌عامل ----
+.DS_Store
+Thumbs.db
+
+# ---- Gradle ----
+.gradle/
+build/
+app/build/
+local.properties
+*.hprof
+
+# ---- Android Studio / IntelliJ ----
+.idea/
+*.iml
+*.ipr
+*.iws
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ---- Kotlin / Java ----
+*.class
+out/
+
+# ---- پروفایل و کرش‌های محلی ----
+profiling/
+*.trace

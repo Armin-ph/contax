@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- رنگ پشتیبان لایه background آیکون adaptive (بخش مرکزی گرادیان آبی آیکون) -->
+    <color name="ic_launcher_background">#4C9BE8</color>
+</resources>
