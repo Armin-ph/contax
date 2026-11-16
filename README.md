@@ -63,8 +63,6 @@
 
 ## 🖼 تصاویر برنامه
 
-> بخش تصاویر — پس از گرفتن اسکرین‌شات‌ها، فایل‌ها را در پوشه `docs/screenshots` قرار دهید.
-
 <p align="center">
   <img src="docs/screenshots/contacts.png" width="200" alt="مخاطبین"/>
   <img src="docs/screenshots/detail.png" width="200" alt="جزئیات مخاطب"/>
