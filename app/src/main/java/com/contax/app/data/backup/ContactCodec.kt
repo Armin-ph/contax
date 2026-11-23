@@ -1,6 +1,5 @@
 package com.contax.app.data.backup
 
-import android.util.Base64
 import com.contax.app.data.model.BackupFormat
 import com.contax.app.data.model.EmailEntry
 import com.contax.app.data.model.EmailLabel
@@ -9,6 +8,15 @@ import com.contax.app.data.model.PhoneEntry
 import com.contax.app.data.model.PhoneLabel
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Base64
+
+/**
+ * VCF / CSV / JSON encode & decode for contacts.
+ *
+ * از java.util.Base64 استفاده می‌کنیم (نه android.util.Base64) تا کلاس روی JVM
+ * هم قابل تست باشد؛ minSdk 26 کاملاً از آن پشتیبانی می‌کند.
+ * دیکد با getMimeDecoder انجام می‌شود تا base64 چندخطیِ فایل‌های VCF سایر برنامه‌ها هم پذیرفته شود.
+ */
 
 /** VCF / CSV / JSON encode & decode for contacts. */
 object ContactCodec {
@@ -57,7 +65,7 @@ object ContactCodec {
             c.sourceTag?.let { append("X-CONTAX-SOURCE:").append(esc(it)).append("\r\n") }
             c.photoBytes?.let {
                 append("PHOTO;ENCODING=BASE64;TYPE=JPEG:")
-                    .append(Base64.encodeToString(it, Base64.NO_WRAP))
+                    .append(Base64.getEncoder().encodeToString(it))
                     .append("\r\n")
             }
             append("END:VCARD\r\n")
@@ -99,7 +107,7 @@ object ContactCodec {
             o.put("address", c.address ?: JSONObject.NULL)
             o.put("note", c.note ?: JSONObject.NULL)
             o.put("source", c.sourceTag ?: "device")
-            c.photoBytes?.let { o.put("photoBase64", Base64.encodeToString(it, Base64.NO_WRAP)) }
+            o.put("photoBase64", c.photoBytes?.let { Base64.getEncoder().encodeToString(it) })
             arr.put(o)
         }
         return arr.toString(2)
@@ -136,7 +144,37 @@ object ContactCodec {
         return Prop(parts[0].trim().uppercase(), parts.drop(1).map { it.trim().uppercase() }, value)
     }
 
-    private fun decodeVcf(text: String): List<ParsedContact> {
+    /**
+     * تفکیک روی جداکننده‌های «escape نشده» — دنباله‌های \; و \, و \\ را نمی‌شکند
+     * تا مقادیرِ escape شده (مثل آدرس حاوی سمی‌کولون) سالم بمانند.
+     */
+    private fun splitUnescaped(s: String, sep: Char): List<String> {
+        val out = ArrayList<String>()
+        val cur = StringBuilder()
+        var i = 0
+        while (i < s.length) {
+            val c = s[i]
+            if (c == '\\' && i + 1 < s.length) {
+                cur.append(c).append(s[i + 1])
+                i += 2
+                continue
+            }
+            if (c == sep) {
+                out.add(cur.toString())
+                cur.clear()
+                i++
+                continue
+            }
+            cur.append(c)
+            i++
+        }
+        out.add(cur.toString())
+        return out
+    }
+
+    private fun decodeVcf(text0: String): List<ParsedContact> {
+        // BOM را حذف کن (مثل detectFormat) — وگرنه «BEGIN:VCARD» اولین کارت شناخته نمی‌شود
+        val text = text0.removePrefix("\uFEFF")
         // unfold folded lines (continuation starts with space/tab)
         val lines = ArrayList<String>()
         for (raw in text.split("\r\n", "\n")) {
@@ -178,7 +216,8 @@ object ContactCodec {
         for (p in props) {
             when {
                 p.name == "N" -> {
-                    val seg = p.value.split(';')
+                    // تفکیک escape-آگاه: اگر نام خودش «;» داشته باشد (به \; انکود شده) نمی‌شکند
+                    val seg = splitUnescaped(p.value, ';')
                     last = unesc(seg.getOrNull(0) ?: "")
                     first = unesc(seg.getOrNull(1) ?: "")
                 }
@@ -203,16 +242,16 @@ object ContactCodec {
                     if (v.isNotBlank()) emails.add(EmailEntry(email = v, label = label))
                 }
                 p.name == "ADR" -> {
-                    // ADR:;;formatted;;;;
-                    val seg = p.value.split(';')
+                    // ADR:;;formatted;;;; — تفکیک escape-آگاه تا آدرس حاوی «;» سالم بماند
+                    val seg = splitUnescaped(p.value, ';')
                     val v = seg.getOrNull(2)?.let { unesc(it) } ?: ""
                     if (v.isNotBlank()) address = v
                 }
                 p.name == "NOTE" -> note = unesc(p.value).takeIf { it.isNotBlank() }
-                p.name == "ORG" -> org = unesc(p.value.split(';').firstOrNull() ?: "").takeIf { it.isNotBlank() }
+                p.name == "ORG" -> org = unesc(splitUnescaped(p.value, ';').firstOrNull() ?: "").takeIf { it.isNotBlank() }
                 p.name == "X-CONTAX-SOURCE" -> sourceTag = unesc(p.value)
                 p.name == "PHOTO" -> photo = try {
-                    Base64.decode(p.value, Base64.NO_WRAP)
+                    Base64.getMimeDecoder().decode(p.value)
                 } catch (t: Throwable) {
                     null
                 }
@@ -338,7 +377,15 @@ object ContactCodec {
                 val e = ea.optJSONObject(j)
                 if (e != null) {
                     val email = e.optString("email", "").trim()
-                    if (email.isNotBlank()) emails.add(EmailEntry(email = email))
+                    if (email.isNotBlank()) {
+                        // لیبل هم برمی‌گردد (هم‌راستا با CSV/VCF) — قبلاً نادیده گرفته می‌شد
+                        val label = when (e.optString("label", "home")) {
+                            "work" -> EmailLabel.WORK
+                            "other" -> EmailLabel.OTHER
+                            else -> EmailLabel.HOME
+                        }
+                        emails.add(EmailEntry(email = email, label = label))
+                    }
                 } else {
                     val s = ea.optString(j, "").trim()
                     if (s.isNotBlank()) emails.add(EmailEntry(email = s))
@@ -357,7 +404,7 @@ object ContactCodec {
                     note = o.optString("note", "").takeIf { it.isNotBlank() },
                     organization = o.optString("organization", "").takeIf { it.isNotBlank() },
                     photoBytes = o.optString("photoBase64", "").takeIf { it.isNotBlank() }?.let {
-                        try { Base64.decode(it, Base64.NO_WRAP) } catch (t: Throwable) { null }
+                        try { Base64.getMimeDecoder().decode(it) } catch (t: Throwable) { null }
                     },
                     sourceTag = o.optString("source", "device").takeIf { it.isNotBlank() }
                 )

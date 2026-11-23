@@ -6,7 +6,7 @@
 
 **مدیریت کامل مخاطبین دستگاه، سیم‌کارت و حساب‌ها همراه با بکاپ رمزگذاری‌شده**
 
-[![Version](https://img.shields.io/badge/نسخه-1.0.0-8E24AA?style=for-the-badge&logo=android)](https://github.com/YOUR_GITHUB_USERNAME/Contax/releases)
+[![Version](https://img.shields.io/badge/نسخه-1.0.4-8E24AA?style=for-the-badge&logo=android)](https://github.com/Armin-ph/contax/releases)
 [![Platform](https://img.shields.io/badge/اندروید-8.0%2B-3DDC84?style=for-the-badge&logo=android)]()
 [![Language](https://img.shields.io/badge/زبان-Kotlin-7F52FF?style=for-the-badge&logo=kotlin)]()
 [![UI](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?style=for-the-badge&logo=jetpackcompose)]()
@@ -63,18 +63,21 @@
 
 ## 🖼 تصاویر برنامه
 
+<!-- برای افزودن اسکرین‌شات، تصاویر را در docs/screenshots/ قرار دهید
+     و بخش زیر را از حالت کامنت خارج کنید:
 <p align="center">
   <img src="docs/screenshots/contacts.png" width="200" alt="مخاطبین"/>
   <img src="docs/screenshots/detail.png" width="200" alt="جزئیات مخاطب"/>
   <img src="docs/screenshots/backup.png" width="200" alt="بکاپ"/>
   <img src="docs/screenshots/tools.png" width="200" alt="ابزارها"/>
 </p>
+-->
 
 ---
 
 ## ⬇️ دانلود
 
-آخرین نسخه از بخش [Releases](https://github.com/YOUR_GITHUB_USERNAME/Contax/releases) گیت‌هاب قابل دریافت است.
+آخرین نسخه از بخش [Releases](https://github.com/Armin-ph/contax/releases) گیت‌هاب قابل دریافت است.
 
 ---
 

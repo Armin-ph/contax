@@ -15,14 +15,16 @@ android {
         applicationId = "com.contax.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
         vectorDrawables { useSupportLibrary = true }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8: کوچک‌سازی + حذف کد استفاده‌نشده + obfuscation (از نسخه ۱.۰.۴)
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -84,4 +86,9 @@ dependencies {
     implementation("androidx.biometric:biometric:1.1.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Unit tests (JVM)
+    testImplementation("junit:junit:4.13.2")
+    // org.json واقعی برای تست JVM (کلاس android.jar فقط stub است)
+    testImplementation("org.json:json:20240303")
 }

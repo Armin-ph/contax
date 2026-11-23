@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.contax.app.data.prefs.SettingsDataStore
 import com.contax.app.ui.navigation.ContaxAppRoot
 import com.contax.app.ui.theme.ContaxTheme
@@ -28,12 +30,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val prefs = SettingsDataStore(applicationContext)
-        runBlocking {
-            val s = prefs.current()
-            if (!prefs.isFirstLocaleApplied()) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(s.language))
-                prefs.markLocaleApplied()
-            }
+        // تنها خواندنِ همگامِ برنامه (runBlocking): برای درست بودن زبان/تم/قفل در
+        // «فریم اول» لازم است. نتیجه به MainViewModel هم پاس داده می‌شود تا
+        // ViewModel دوبار خواندن sync نداشته باشد.
+        val initial = runBlocking { prefs.current() }
+        if (!prefs.isFirstLocaleApplied()) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(initial.language))
+            prefs.markLocaleApplied()
         }
 
         // همگام‌سازی زبانِ مؤثر برنامه برای توابع اعداد و تاریخ (Fa)
@@ -47,8 +50,13 @@ class MainActivity : AppCompatActivity() {
             Fa.syncLocale(resources.configuration)
         }
 
+        val app = application
         setContent {
-            val vm: MainViewModel = viewModel()
+            val vm: MainViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { MainViewModel(app, initial) }
+                }
+            )
             val settings by vm.settings.collectAsState()
             ContaxTheme(themeMode = settings.theme) {
                 Surface(

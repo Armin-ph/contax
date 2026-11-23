@@ -19,28 +19,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 /** وضعیت بررسی دستی به‌روزرسانی (از صفحه تنظیمات) */
 enum class UpdateCheckState { IDLE, CHECKING, AVAILABLE, LATEST }
 
-class MainViewModel(app: Application) : AndroidViewModel(app) {
+class MainViewModel(app: Application, initial: SettingsData) : AndroidViewModel(app) {
 
     private val prefs = SettingsDataStore(app)
 
-    private val _settings = MutableStateFlow(SettingsData())
+    private val _settings = MutableStateFlow(initial)
     val settings: StateFlow<SettingsData> = _settings
 
     private val _locked = MutableStateFlow(false)
     val locked: StateFlow<Boolean> = _locked
 
     init {
-        // Synchronous first load so the very first frame already has theme/lock state
-        val first = runBlocking { prefs.current() }
-        _settings.value = first
-        _locked.value = first.lockEnabled
+        // وضعیت اولیه (تم/قفل/زمان‌بندی) از MainActivity می‌آید — همان یک خواندنِ
+        // همگامِ پیش از فریم اول؛ اینجا دیگر runBlocking نداریم.
+        _locked.value = initial.lockEnabled
         // keep auto-backup worker in sync with stored settings
-        BackupScheduler.apply(app, first.scheduleMode, first.scheduleHour)
+        BackupScheduler.apply(app, initial.scheduleMode, initial.scheduleHour)
         // keep collecting changes
         viewModelScope.launch {
             prefs.settings.collect { s ->

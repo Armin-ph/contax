@@ -39,6 +39,10 @@ interface BackupDao {
     @Query("DELETE FROM backups WHERE id = :id")
     suspend fun delete(id: Long)
 
+    /** همه بکاپ‌های خودکار، جدید به قدیمی — برای هرس نسخه‌های قدیمی */
+    @Query("SELECT * FROM backups WHERE isAuto = 1 ORDER BY createdAt DESC")
+    suspend fun autoAll(): List<BackupEntity>
+
     @Query("SELECT MAX(createdAt) FROM backups")
     suspend fun lastCreatedAt(): Long?
 }

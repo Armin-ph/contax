@@ -43,6 +43,17 @@ class ContactsRepository(private val context: Context) {
     private val cr = context.contentResolver
     private val simHelper = SimContactsHelper(cr)
 
+    companion object {
+        /**
+         * کش snapshot آخرین لیست کامل مخاطبین (شامل عکس‌ها) — بین نمونه‌های مختلف
+         * ریپازیتوری مشترک است. با هر تغییر (درج/ویرایش/حذف/علاقه‌مندی) باطل می‌شود.
+         */
+        @Volatile private var cachedAll: List<Contact>? = null
+
+        /** باطل‌کردن کش — پس از هر تغییر مخاطبین یا وقتی داده خارجی تغییر کرده */
+        fun invalidateCache() { cachedAll = null }
+    }
+
     // ─────────────────────────── permissions ───────────────────────────
 
     fun hasPermission(): Boolean =
@@ -85,12 +96,21 @@ class ContactsRepository(private val context: Context) {
 
     // ─────────────────────────── read ───────────────────────────
 
-    suspend fun getAll(): List<Contact> = withContext(Dispatchers.IO) {
-        if (!hasPermission()) emptyList() else queryAll()
+    suspend fun getAll(force: Boolean = false): List<Contact> = withContext(Dispatchers.IO) {
+        if (!hasPermission()) {
+            invalidateCache()
+            emptyList()
+        } else {
+            val cached = cachedAll
+            // فراخوانی‌های داخلی (حذف/ادغام/بازیابی/مقایسه…) از کش استفاده می‌کنند
+            // تا هر عملیات چند بار کل ContactsProvider را با عکس‌ها نخواند؛
+            // رابط کاربری برای تازه‌سازی دستی force = true می‌فرستد.
+            if (!force && cached != null) cached else queryAll().also { cachedAll = it }
+        }
     }
 
     suspend fun getById(id: Long): Contact? = withContext(Dispatchers.IO) {
-        if (!hasPermission()) null else queryAll().firstOrNull { it.id == id }
+        if (!hasPermission()) null else getAll().firstOrNull { it.id == id }
     }
 
     private fun queryAll(): List<Contact> {
@@ -363,7 +383,7 @@ class ContactsRepository(private val context: Context) {
                     val sim = simFor(source.slot)
                         ?: return@withContext Result.failure(IllegalStateException("sim_unavailable"))
                     val ok = simHelper.insert(sim, pc.displayName, pc.primaryPhone ?: "")
-                    if (ok) Result.success(-1L) else Result.failure(IllegalStateException("sim_write_failed"))
+                    if (ok) { invalidateCache(); Result.success(-1L) } else Result.failure(IllegalStateException("sim_write_failed"))
                 }
                 else -> {
                     if (!hasPermission()) return@withContext Result.failure(SecurityException("no_permission"))
@@ -377,6 +397,7 @@ class ContactsRepository(private val context: Context) {
                         "${RawContacts._ID}=?",
                         arrayOf(rawId.toString()), null
                     )?.use { c -> if (c.moveToFirst()) contactId = c.getLong(0) }
+                    invalidateCache()
                     Result.success(contactId)
                 }
             }
@@ -448,6 +469,7 @@ class ContactsRepository(private val context: Context) {
                 ops.add(dataOp(Data.MIMETYPE to Photo.CONTENT_ITEM_TYPE, Photo.PHOTO to it).build())
             }
             cr.applyBatch(ContactsContract.AUTHORITY, ops)
+            invalidateCache()
             Result.success(Unit)
         } catch (t: Throwable) {
             Result.failure(t)
@@ -463,12 +485,13 @@ class ContactsRepository(private val context: Context) {
         val oldNumber = contact.primaryPhone ?: ""
         // ۱) ویرایش درجای سیم‌کارت (فرمت صحیح IccProvider) — جای رکورد عوض نمی‌شود
         if (simHelper.update(sim, oldName, oldNumber, newName, newNumber)) {
+            invalidateCache()
             return@withContext Result.success(Unit)
         }
         // ۲) پشتیبان: حذف + درج
         val del = simHelper.delete(sim, oldName, oldNumber)
         val ins = if (del) simHelper.insert(sim, newName, newNumber) else false
-        if (ins) Result.success(Unit)
+        if (ins) { invalidateCache(); Result.success(Unit) }
         else Result.failure(IllegalStateException("sim_write_failed"))
     }
 
@@ -476,7 +499,7 @@ class ContactsRepository(private val context: Context) {
 
     suspend fun delete(ids: List<Long>): Result<Int> = withContext(Dispatchers.IO) {
         if (!hasPermission()) return@withContext Result.failure(SecurityException("no_permission"))
-        val all = queryAll()
+        val all = getAll()
         var n = 0
         var attempted = 0
         var simFailure = false
@@ -513,8 +536,10 @@ class ContactsRepository(private val context: Context) {
         if (n == 0 && attempted > 0) {
             val code = if (simFailure) "sim_write_failed" else "delete_failed"
             Result.failure(IllegalStateException(code))
-        } else
+        } else {
+            if (n > 0) invalidateCache()
             Result.success(n)
+        }
     }
 
     suspend fun setFavorite(id: Long, fav: Boolean): Result<Unit> = withContext(Dispatchers.IO) {
@@ -522,6 +547,7 @@ class ContactsRepository(private val context: Context) {
             if (id < 0) return@withContext Result.failure(IllegalStateException("not_supported"))
             val cv = ContentValues().apply { put(Contacts.STARRED, if (fav) 1 else 0) }
             cr.update(ContentUris.withAppendedId(Contacts.CONTENT_URI, id), cv, null, null)
+            invalidateCache()
             Result.success(Unit)
         } catch (t: Throwable) {
             Result.failure(t)
@@ -533,7 +559,7 @@ class ContactsRepository(private val context: Context) {
     data class TransferResult(val ok: Int, val failed: Int)
 
     suspend fun copyOrMove(ids: List<Long>, target: ContactSource, move: Boolean): TransferResult = withContext(Dispatchers.IO) {
-        val all = queryAll()
+        val all = getAll()
         var ok = 0
         var failed = 0
         for (id in ids) {
@@ -569,7 +595,7 @@ class ContactsRepository(private val context: Context) {
     suspend fun merge(ids: List<Long>): Result<Contact?> = withContext(Dispatchers.IO) {
         try {
             if (!hasPermission()) return@withContext Result.failure(SecurityException("no_permission"))
-            val all = queryAll()
+            val all = getAll()
             val group = ids.mapNotNull { id -> all.firstOrNull { it.id == id } }
             if (group.size < 2) return@withContext Result.failure(IllegalStateException("need_two"))
 
@@ -632,7 +658,7 @@ class ContactsRepository(private val context: Context) {
     }
 
     suspend fun findDuplicates(): List<DuplicateGroup> = withContext(Dispatchers.IO) {
-        val all = queryAll()
+        val all = getAll()
         // union-find over contact ids
         val parent = HashMap<Long, Long>()
         fun find(x: Long): Long {

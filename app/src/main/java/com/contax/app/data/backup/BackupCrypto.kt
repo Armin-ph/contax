@@ -2,10 +2,10 @@ package com.contax.app.data.backup
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Base64
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -19,6 +19,9 @@ import javax.crypto.spec.SecretKeySpec
  * - PASSWORD mode: PBKDF2WithHmacSHA256 → AES-256-GCM, envelope: CNTX1 + salt(16) + iv(12) + ciphertext
  * - DEVICE_KEY mode: Android Keystore AES key, envelope: CNTX1K + iv(12) + ciphertext
  * - PIN: PBKDF2 hash "v1:saltB64:hashB64"
+ *
+ * برای هش PIN از java.util.Base64 استفاده می‌کنیم (نه android.util.Base64)
+ * تا مسیر hash/verify روی JVM هم قابل تست باشد؛ minSdk 26 کاملاً پشتیبانی می‌کند.
  */
 object BackupCrypto {
 
@@ -106,15 +109,15 @@ object BackupCrypto {
     fun hashPin(pin: String): String {
         val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
         val hash = pbkdf2(pin, salt)
-        return "v1:" + Base64.encodeToString(salt, Base64.NO_WRAP) + ":" + Base64.encodeToString(hash, Base64.NO_WRAP)
+        return "v1:" + Base64.getEncoder().encodeToString(salt) + ":" + Base64.getEncoder().encodeToString(hash)
     }
 
     fun verifyPin(pin: String, stored: String): Boolean = try {
         val parts = stored.split(":")
         if (parts.size != 3 || parts[0] != "v1") false
         else {
-            val salt = Base64.decode(parts[1], Base64.NO_WRAP)
-            val expected = Base64.decode(parts[2], Base64.NO_WRAP)
+            val salt = Base64.getMimeDecoder().decode(parts[1])
+            val expected = Base64.getMimeDecoder().decode(parts[2])
             MessageDigest.isEqual(pbkdf2(pin, salt), expected)
         }
     } catch (t: Throwable) {

@@ -55,18 +55,25 @@ class BackupWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         val prefs = SettingsDataStore(appContext)
         val settings = prefs.current()
         val repo = BackupRepository(appContext)
+        // نام یکتا با مهر زمانی — قبلاً همه بکاپ‌های خودکار روی «یک فایل ثابت»
+        // نوشته می‌شدند و ردیف‌های تاریخچه همگی به یک فایل مشترک اشاره می‌کردند؛
+        // در نتیجه حذف هر ردیف، فایل بقیه را هم از بین می‌برد.
+        val stamp = java.text.SimpleDateFormat("yyyyMMdd-HHmmss", java.util.Locale.US)
+            .format(java.util.Date(System.currentTimeMillis()))
         val result = repo.create(
             BackupRepository.NewBackup(
                 format = settings.autoFormat,
                 destination = BackupDestination.INTERNAL,
                 encryption = EncryptionType.NONE,
                 isAuto = true,
-                name = "contax-auto-${settings.autoFormat.ext}"
+                name = "contax-auto-$stamp"
             )
         )
         result.fold(
             onSuccess = { info ->
                 prefs.setLastAutoBackupAt(System.currentTimeMillis())
+                // هرس نسخه‌های خودکار قدیمی — فقط AUTO_KEEP تا آخر می‌ماند
+                try { repo.pruneAutoBackups() } catch (t: Throwable) { /* هرس حیاتی نیست */ }
                 notifyDone(info.contactCount)
             },
             onFailure = { notifyFail() }

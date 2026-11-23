@@ -140,6 +140,27 @@ class BackupRepository(private val context: Context) {
         }
     }
 
+    /**
+     * هرس بکاپ‌های خودکار قدیمی: فقط [keep] نسخه آخر (به‌همراه فایل‌شان) می‌ماند.
+     * قبل از این، همه بکاپ‌های خودکار روی «یک فایل ثابت» overwrite می‌شدند ولی
+     * هر بار یک ردیف جدید در تاریخچه ثبت می‌شد؛ حالا هر بکاپ خودکار نام یکتا دارد
+     * و نسخه‌های قدیمی با فایل‌شان حذف می‌شوند.
+     */
+    suspend fun pruneAutoBackups(keep: Int = AUTO_KEEP): Unit = withContext(Dispatchers.IO) {
+        val old = dao.autoAll().drop(keep)
+        for (e in old) {
+            dao.delete(e.id)
+            e.fileName?.let {
+                try { File(File(context.filesDir, "backups"), it).delete() } catch (t: Throwable) { /* ignore */ }
+            }
+        }
+    }
+
+    companion object {
+        /** حداکثر تعداد بکاپ خودکار نگه‌داشته‌شده در تاریخچه */
+        const val AUTO_KEEP = 10
+    }
+
     // ───────────────────────── read / decrypt ─────────────────────────
 
     suspend fun readFile(info: BackupInfo): ByteArray? = withContext(Dispatchers.IO) {

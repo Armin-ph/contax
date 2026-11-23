@@ -55,7 +55,7 @@ class ContactsViewModel(app: Application) : AndroidViewModel(app) {
                 _ui.update { it.copy(loading = false, contacts = emptyList(), sources = listOf(ContactSource.Device)) }
                 return@launch
             }
-            val list = repo.getAll()
+            val list = repo.getAll(force = true)
             val srcs = repo.sources()
             _ui.update {
                 it.copy(
