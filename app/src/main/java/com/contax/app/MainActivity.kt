@@ -33,10 +33,15 @@ class MainActivity : AppCompatActivity() {
         // تنها خواندنِ همگامِ برنامه (runBlocking): برای درست بودن زبان/تم/قفل در
         // «فریم اول» لازم است. نتیجه به MainViewModel هم پاس داده می‌شود تا
         // ViewModel دوبار خواندن sync نداشته باشد.
-        val initial = runBlocking { prefs.current() }
-        if (!prefs.isFirstLocaleApplied()) {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(initial.language))
-            prefs.markLocaleApplied()
+        // isFirstLocaleApplied/markLocaleApplied توابع suspend هستند و باید
+        // داخل همین بلاک coroutine فراخوانی شوند.
+        val initial = runBlocking {
+            val s = prefs.current()
+            if (!prefs.isFirstLocaleApplied()) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(s.language))
+                prefs.markLocaleApplied()
+            }
+            s
         }
 
         // همگام‌سازی زبانِ مؤثر برنامه برای توابع اعداد و تاریخ (Fa)
